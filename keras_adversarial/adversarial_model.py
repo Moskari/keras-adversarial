@@ -88,9 +88,9 @@ class AdversarialModel(Model):
         def filter_inputs(inputs):
             return inputs
 
-        self.internal_input_shapes = filter_inputs(self.layers[0].internal_input_shapes)
-        self.input_names = filter_inputs(self.layers[0].input_names)
-        self.inputs = filter_inputs(self.layers[0].inputs)
+        self.internal_input_shapes = filter_inputs(self.layers[0]._feed_input_shapes) # internal_input_shapes)
+        self.input_names = filter_inputs(self.layers[0]._feed_input_names) # input_names)
+        self.inputs = filter_inputs(self.layers[0]._feed_inputs) # inputs)
 
         # Outputs are concatenated player models
         models = self.layers
@@ -98,8 +98,8 @@ class AdversarialModel(Model):
         def collect(f):
             return list(itertools.chain.from_iterable(f(m) for m in models))
 
-        self.internal_output_shapes = collect(lambda m: m.internal_output_shapes)
-        self.loss_functions = collect(lambda m: m.loss_functions)
+        self.internal_output_shapes = collect(lambda m: m._feed_output_shapes) # internal_output_shapes)
+        self.loss_functions = collect(lambda m: m._feed_loss_fns) #loss_functions)
 
         self.targets = collect(lambda m: m.targets)
         self.outputs = collect(lambda m: m.outputs)
@@ -131,6 +131,9 @@ class AdversarialModel(Model):
         self._feed_output_shapes = self.internal_output_shapes
         self._feed_sample_weights = self.sample_weights
         self._feed_sample_weight_modes = self.sample_weight_modes
+        self._feed_targets = self.targets
+        self._feed_outputs = self.outputs
+
 
     @property
     def constraints(self):
