@@ -1,3 +1,6 @@
+Fixed incompatibility issues with newest Keras 2 version.
+
+
 Keras Adversarial Models
 ========================
 
